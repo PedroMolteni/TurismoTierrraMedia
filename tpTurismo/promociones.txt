@@ -1,0 +1,4 @@
+P;PackAventura;20;BosqueNegro:Mordor
+A;PackDegustacion;36;Lothlorien:LaComarca
+X;PackPaisajes;Erebor;MinasTirith:AbismoDeHelm
+

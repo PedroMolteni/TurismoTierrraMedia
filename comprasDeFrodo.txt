@@ -1,0 +1,5 @@
+Compras de Frodo:
+Moria
+Costo total: 10 monedas de oro
+Tiempo necesario: 2.0 horas
+

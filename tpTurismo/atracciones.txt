@@ -1,0 +1,8 @@
+Moria;10;2;6;Aventura
+MinasTirith;5;2.5;25;Paisaje
+LaComarca;3;6.5;150;Degustacion
+Mordor;25;3;4;Aventura
+AbismoDeHelm;5;2;15;Paisaje
+Lothlorien;35;1;30;Degustacion
+Erebor;12;3;32;Paisaje
+BosqueNegro;3;4;12;Aventura
