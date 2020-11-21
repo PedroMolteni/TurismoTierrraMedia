@@ -1,50 +1,82 @@
 package TurismoTierraMedia;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Scanner;
 
 public class LeerUsuario {
-	public static ArrayList<Usuario> ingresarUsuarios(String archivo)  {
+	public static ArrayList<Usuario> ingresarUsuarios() {
 		ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
-		Scanner sc = null;
+		Connection connection = null;
 		try {
-				sc = new Scanner(new File(archivo));
-				sc.useLocale(Locale.ENGLISH);
-				while(sc.hasNext()) {
-					String line = sc.nextLine();
-					String [] datos = line.split(";");
-					usuarios.add(new Usuario(datos[0],  datos[1], Integer.parseInt(datos[2]),  Double.parseDouble(datos[3])));
-				}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}finally {
-			sc.close();
+			connection = DriverManager.getConnection("jdbc:sqlite:db/ttmdb.db");
+			Statement statement = connection.createStatement();
+			statement.setQueryTimeout(30);
+
+			ResultSet rs = statement.executeQuery("SELECT * FROM usuario");
+			while (rs.next()) {
+				Usuario usuario = new Usuario(rs.getString("nombre"), rs.getString("preferencia"),
+						rs.getInt("presupuesto"), rs.getDouble("tiempo_disponible"));
+				usuarios.add(usuario);
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		} finally {
+			try {
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				System.err.println(e.getMessage());
+			}
 		}
 		return usuarios;
 	}
-	
-	public static void crearArchivo(Usuario usuario) {
-		PrintWriter salida = null;
-		String nombreArchivo = "comprasDe";
+
+	public static void grabarItinerario(Usuario usuario) {
+		Connection connection = null;
 		try {
-			salida = new PrintWriter(new FileWriter(nombreArchivo + usuario.getNombre() + ".txt"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}  
-	    String s="Compras de " + usuario.getNombre() +":\n";
-	    for(Comprable comprable : usuario.getCompras()) {
-	    	s = s + comprable.getNombre() + "\n";
-	    }
-	    	s = s + "Costo total: " + Comprable.costoTotal(usuario.getCompras()) + " monedas de oro\n";
-	    	s= s + "Tiempo necesario: " + Comprable.tiempoTotal(usuario.getCompras()) + " horas\n";
-	    salida.println(s);       
-		
-		salida.close();
+			connection = DriverManager.getConnection("jdbc:sqlite:db/ttmdb.db");
+			PreparedStatement psInsertar = null;
+
+			psInsertar = connection.prepareStatement("INSERT INTO itinerario(usuario, costo, tiempo) VALUES(?,?,?)",
+					PreparedStatement.RETURN_GENERATED_KEYS);
+			psInsertar.setString(1, usuario.getNombre());
+			psInsertar.setInt(2, Compra.costoTotal(usuario.getCompras()));
+			psInsertar.setDouble(3, Compra.tiempoTotal(usuario.getCompras()));
+			psInsertar.executeUpdate();
+
+			psInsertar = connection
+					.prepareStatement("INSERT INTO itinerario_atracciones(itinerario, atraccion) VALUES(?,?)");
+			ResultSet rs = psInsertar.getGeneratedKeys();
+			rs.next();
+			int idItinerario = rs.getInt(1);
+			for (Compra c : usuario.getCompras()) {
+				if (c.esUnaPromo()) {
+					Promocion p = (Promocion) c;
+					for (Atraccion a : p.getAtracciones()) {
+						psInsertar.setInt(1, idItinerario);
+						psInsertar.setString(2, a.getNombre());
+						psInsertar.executeUpdate();
+					}
+				} else {
+					psInsertar.setInt(1, idItinerario);
+					psInsertar.setString(2, c.getNombre());
+					psInsertar.executeUpdate();
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println(e.getMessage());
+		} finally {
+			try {
+				if (connection != null)
+					connection.close();
+			} catch (SQLException e) {
+				System.err.println(e.getMessage());
+			}
+		}
 	}
 }

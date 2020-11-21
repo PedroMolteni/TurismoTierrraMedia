@@ -2,73 +2,86 @@ package TurismoTierraMedia;
 
 import java.util.ArrayList;
 
-public abstract class Promocion extends Comprable{
-	protected ArrayList<Atraccion> atracciones; 
+public abstract class Promocion extends Compra {
 	protected String nombre;
-	protected String tipoPredominante;
-	
-	public Promocion(String nombre, ArrayList<Atraccion> atracciones) {
+	protected String tipoPreferencia;
+	protected int costo;
+	protected double tiempo;
+	protected ArrayList<Atraccion> atracciones;
+
+	public Promocion(String nombre, String tipoPreferencia, int costo, double tiempo,
+			ArrayList<Atraccion> atracciones) {
 		this.nombre = nombre;
+		this.tipoPreferencia = tipoPreferencia;
+		this.costo = costo;
+		this.tiempo = tiempo;
 		this.atracciones = atracciones;
-		this.tipoPredominante = atracciones.get(0).getTipo();
 	}
-	
+
+	public ArrayList<Atraccion> getAtracciones() {
+		return this.atracciones;
+	}
+
 	@Override
-	public boolean contieneA(Comprable comprable) {
-		for(Atraccion atraccion : atracciones) {
-			if(comprable.tiene(atraccion))
+	public String getNombre() {
+		return this.nombre;
+	}
+
+	@Override
+	public String getTipo() {
+		return this.tipoPreferencia;
+	}
+
+	@Override
+	public int getCosto() {
+		return this.costo;
+	}
+
+	@Override
+	public double getTiempo() {
+		return this.tiempo;
+	}
+
+	@Override
+	public int getCupo() {
+		int cupo = Integer.MAX_VALUE;
+		for (Atraccion a : this.getAtracciones()) {
+			if (a.getCupo() < cupo)
+				cupo = a.getCupo();
+		}
+		return cupo;
+	}
+
+	@Override
+	public void restarCupo() {
+		for (Atraccion a : this.getAtracciones())
+			a.restarCupo();
+	}
+
+	@Override
+	public boolean contieneA(Compra compra) {
+		for (Atraccion a : this.getAtracciones()) {
+			if (compra.tiene(a))
 				return true;
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean tiene(Atraccion atraccion){
-		if(atracciones.contains(atraccion))
+	public boolean tiene(Atraccion atraccion) {
+		if (this.getAtracciones().contains(atraccion))
 			return true;
 		return false;
 	}
-	
-	@Override
-	public Double getTiempo() {
-		Double tiempo = 0.0;
-		for(Comprable atraccion : atracciones) {
-			tiempo += atraccion.getTiempo();
-		}
-		return tiempo;
-	}
-	@Override
-	public String getNombre() {
-		String texto = this.nombre + ": "; 
-		for(int i =0; i<atracciones.size(); i++) {
-			if(i==0)
-				texto = texto + atracciones.get(i).getNombre();
-			else
-				texto = texto + ", " + atracciones.get(i).getNombre();
-		}
-		return texto + ".";
-	}
-	
-	@Override
-	public String getTipo() {
-		return this.tipoPredominante;
-	}
 
 	@Override
-	public Integer getCupo() {
-		Integer cupo = 0;
-		for(Comprable atraccion : atracciones) {
-			if(cupo == 0)
-				cupo = atraccion.getCupo();
-			if(cupo < atraccion.getCupo())
-				cupo = atraccion.getCupo();
-		}
-		return cupo;
-	}
-	
-	@Override
-	public boolean esUnPack() {
+	public boolean esUnaPromo() {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "|" + getNombre() + "|\nPreferencia: " + this.getTipo() + "\nCosto: " + this.getCosto()
+				+ " monedas de oro\nTiempo: " + this.getTiempo() + " horas\nAtracciones: " + this.getAtracciones();
+	}
 }

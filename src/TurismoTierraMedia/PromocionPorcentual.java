@@ -3,26 +3,15 @@ package TurismoTierraMedia;
 import java.util.ArrayList;
 
 public class PromocionPorcentual extends Promocion {
-	private Integer descuento;
+	private int porcentajeDescuento;
 
-	public PromocionPorcentual(String nombre, Integer descuento, ArrayList<Atraccion> atracciones) {
-		super(nombre, atracciones);
-		this.descuento = descuento;
-	}
-	
-	@Override
-	public Integer getCosto() {
-		Integer costo = 0;
-		for(Comprable atraccion : atracciones) {
-			costo += atraccion.getCosto();
-		}
-		return costo - (costo*this.descuento/100);
+	public PromocionPorcentual(String nombre, String tipoPreferencia, int costo, double tiempo,
+			ArrayList<Atraccion> atracciones, int porcentajeDescuento) {
+		super(nombre, tipoPreferencia, costo, tiempo, atracciones);
+		this.porcentajeDescuento = porcentajeDescuento;
 	}
 
-	@Override
-	public String toString() {	
-		return getNombre()+"\nCosto: " + getCosto() + " monedas de oro"+ "\nDescuento: " + descuento + "%" + "\nTiempo: " + getTiempo() + " horas" +
-			"\nTipo predominante: " + getTipo() + "\n";	}
-
-
+	public int getPorcentajeDescuento() {
+		return this.porcentajeDescuento;
+	}
 }

@@ -7,62 +7,80 @@ public class Usuario {
 	private String preferencia;
 	private int presupuesto;
 	private double tiempoDisponible;
-	private ArrayList<Comprable> compras;
+	private ArrayList<Compra> compras;
 
 	public Usuario(String nombre, String preferencia, int presupuesto, double tiempoDisponible) {
 		this.nombre = nombre;
 		this.preferencia = preferencia;
 		this.presupuesto = presupuesto;
 		this.tiempoDisponible = tiempoDisponible;
-		this.compras = new ArrayList<Comprable>();
-	}
-	
-	public void ofrecerOpciones(ArrayList<Comprable> atraccionesRecibidas) {
-		ArrayList<Comprable> atracciones = Comprable.ordenarSegunPreferencia(atraccionesRecibidas, this.preferencia);
-		Comprable.imprimirOpciones(atracciones, this);
-	}
-	
-	public void imprimirCompras() {
-		System.out.println("Compraste: " + compras);
-	}
-	
-	public void comprar(Comprable atraccion) {
-		compras.add(atraccion);
-		this.presupuesto -= atraccion.getCosto();
-		this.tiempoDisponible -= atraccion.getTiempo();
-	}
-	
-	public void imprimirDatos() {
-		System.out.println(nombre+" { Oro disponible:" + presupuesto + ", Horas disponible:" + tiempoDisponible + "}");
-	}
-	
-	public boolean puedeSeguirComprando(int costo, Double tiempo) {
-		return (presupuesto > 0) && (tiempoDisponible > 0) && puedeComprar(costo) && tieneTiempoSuficiente(tiempo);
-	}
-	
-	public boolean puedeComprar(int costo) {
-		return this.presupuesto >= costo;
-	}
-	
-	public boolean yaCompro(Comprable atraccion){
-		return Comprable.pertenceA(compras, atraccion);
-	}
-	public boolean tieneTiempoSuficiente(Double tiempo) {
-		return this.tiempoDisponible >= tiempo;
-	}
-	
-	@Override
-	public String toString() {
-		return "Usuario [nombre=" + nombre + ", preferencia=" + preferencia + ", presupuesto=" + presupuesto
-				+ ", tiempoDisponible=" + tiempoDisponible + ", compras=" + compras + "]";
-	}
-
-	public ArrayList<Comprable> getCompras() {
-		return compras;
+		this.compras = new ArrayList<Compra>();
 	}
 
 	public String getNombre() {
-		return nombre;
+		return this.nombre;
 	}
-	
+
+	public String getPreferencia() {
+		return this.preferencia;
+	}
+
+	public int getPresupuesto() {
+		return this.presupuesto;
+	}
+
+	private void setPresupuesto(int presupuesto) {
+		this.presupuesto = presupuesto;
+	}
+
+	public double getTiempoDisponible() {
+		return this.tiempoDisponible;
+	}
+
+	private void setTiempoDisponible(double tiempoDisponible) {
+		this.tiempoDisponible = tiempoDisponible;
+	}
+
+	public ArrayList<Compra> getCompras() {
+		return this.compras;
+	}
+
+	public void imprimirCompras() {
+		System.out.println("Compraste: " + this.getCompras());
+	}
+
+	public void comprar(Compra compra) {
+		this.getCompras().add(compra);
+		this.setPresupuesto(this.getPresupuesto() - compra.getCosto());
+		this.setTiempoDisponible(this.getTiempoDisponible() - compra.getTiempo());
+	}
+
+	public void imprimirDatos() {
+		System.out.println("|" + this.getNombre() + "| Oro disponible: " + this.getPresupuesto()
+				+ " monedas, Tiempo disponible: " + this.getTiempoDisponible() + " horas");
+	}
+
+	public boolean yaCompro(Compra compra) {
+		return Compra.pertenceA(this.getCompras(), compra);
+	}
+
+	public boolean puedeSeguirComprando(int costo, double tiempo) {
+		return (this.getPresupuesto() > 0) && (this.getTiempoDisponible() > 0) && this.tieneMonedasSuficientes(costo)
+				&& this.tieneTiempoSuficiente(tiempo);
+	}
+
+	public boolean tieneMonedasSuficientes(int costo) {
+		return this.getPresupuesto() >= costo;
+	}
+
+	public boolean tieneTiempoSuficiente(double tiempo) {
+		return this.getTiempoDisponible() >= tiempo;
+	}
+
+	@Override
+	public String toString() {
+		return "|" + this.getNombre() + "|" + ", Preferencia: " + this.getPreferencia() + ", Presupuesto: "
+				+ this.getPresupuesto() + " monedas, Tiempo disponible: " + this.getTiempoDisponible()
+				+ " horas, Compras: " + this.getCompras();
+	}
 }

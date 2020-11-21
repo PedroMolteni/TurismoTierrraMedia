@@ -1,13 +1,13 @@
 package TurismoTierraMedia;
 
-public class Atraccion extends Comprable{
+public class Atraccion extends Compra {
 	private String nombre;
-	private Integer costo;
-	private Double tiempo;
-	private Integer cupo;
 	private String tipo;
+	private int costo;
+	private double tiempo;
+	private int cupo;
 
-	public Atraccion(String nombre, Integer costo, Double tiempo, Integer cupo, String tipo) {
+	public Atraccion(String nombre, String tipo, int costo, double tiempo, int cupo) {
 		this.nombre = nombre;
 		this.tipo = tipo;
 		this.costo = costo;
@@ -17,68 +17,59 @@ public class Atraccion extends Comprable{
 
 	@Override
 	public String getNombre() {
-		return nombre;
+		return this.nombre;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	@Override
-	public Integer getCosto() {
-		return costo;
-	}
-
-	public void setCosto(Integer costo) {
-		this.costo = costo;
-	}
-
-	@Override
-	public Double getTiempo() {
-		return tiempo;
-	}
-
-	public void setTiempo(Double tiempo) {
-		this.tiempo = tiempo;
-	}
-	
-	@Override
-	public Integer getCupo() {
-		return cupo;
-	}
-
-	public void setCupo(Integer cupo) {
-		this.cupo = cupo;
-	}
-	
 	@Override
 	public String getTipo() {
-		return tipo;
+		return this.tipo;
 	}
 
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	@Override
+	public int getCosto() {
+		return this.costo;
+	}
+
+	@Override
+	public double getTiempo() {
+		return this.tiempo;
+	}
+
+	@Override
+	public int getCupo() {
+		return this.cupo;
+	}
+
+	@Override
+	public void restarCupo() {
+		try {
+			if (this.getCupo() > 0)
+				this.cupo--;
+			else
+				throw new Exception("No hay mas cupo");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	@Override
+	public boolean contieneA(Compra compra) {
+		return compra.tiene(this);
+	}
+
+	@Override
+	public boolean tiene(Atraccion atraccion) {
+		return this.equals(atraccion);
+	}
+
+	@Override
+	public boolean esUnaPromo() {
+		return false;
 	}
 
 	@Override
 	public String toString() {
-		return nombre + "\nCosto: " + costo + " monedas de oro" + "\nTiempo: " + tiempo + " horas" + " \nCupo: " + cupo + "\nTipo: "
-				+ tipo + "\n";
-	}
-	
-	@Override
-	public boolean contieneA(Comprable comprable) {
-		return comprable.tiene(this);
-	}
-	
-	@Override
-	public boolean tiene(Atraccion atraccion){
-		return this.equals(atraccion);
-	}
-	
-	
-	@Override
-	public boolean esUnPack() {
-		return false;
+		return "|" + this.getNombre() + "|" + "\nCosto: " + this.getCosto() + " monedas de oro" + "\nTiempo: "
+				+ this.getTiempo() + " horas" + " \nCupo: " + this.getCupo() + "\nTipo: " + this.getTipo() + "\n";
 	}
 }
