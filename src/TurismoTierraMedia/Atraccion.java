@@ -59,7 +59,7 @@ public class Atraccion extends Compra {
 
 	@Override
 	public boolean tiene(Atraccion atraccion) {
-		return this.equals(atraccion);
+		return this.getNombre().equals(atraccion.getNombre());
 	}
 
 	@Override

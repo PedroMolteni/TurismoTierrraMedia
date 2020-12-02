@@ -8,7 +8,8 @@ public abstract class Compra implements Comparable<Compra> {
 
 	public static void vender(Usuario usuario, ArrayList<Compra> listaAOfrecer) {
 		Compra.ofrecerOpciones(listaAOfrecer, usuario);
-		usuario.imprimirCompras();
+		System.out.println(usuario.imprimirCompras());
+		System.out.println(usuario.imprimirEstado());
 		LeerUsuario.grabarItinerario(usuario);
 	}
 
@@ -38,12 +39,20 @@ public abstract class Compra implements Comparable<Compra> {
 		Scanner sc = new Scanner(System.in);
 		for (Compra c : listaAOfrecerOrdenada) {
 			if (usuario.puedeSeguirComprando(c.getCosto(), c.getTiempo()) && !usuario.yaCompro(c) && c.getCupo() > 0) {
-				usuario.imprimirDatos();
+				usuario.imprimirEstado();
 				System.out.println("Le podemos ofrecer " + c + "\nDesea comprar esta oferta? (Y/N)");
 				String respuesta = sc.nextLine();
-				if (respuesta.equals("Y")) {
-					usuario.comprar(c);
-					c.restarCupo();
+				try {
+					if (!(respuesta.equals("Y") || respuesta.equals("y") || respuesta.equals("N")
+							|| respuesta.equals("n")))
+						throw new Exception("Ingreso incorrecto");
+					if (respuesta.equals("Y") || respuesta.equals("y")) {
+						usuario.comprar(c);
+						c.restarCupo();
+					}
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+					Compra.imprimirOpciones(listaAOfrecerOrdenada, usuario);
 				}
 			}
 		}

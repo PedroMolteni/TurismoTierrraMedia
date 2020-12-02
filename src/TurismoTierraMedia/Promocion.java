@@ -81,7 +81,10 @@ public abstract class Promocion extends Compra {
 
 	@Override
 	public String toString() {
+		String nombresAtracciones = "";
+		for (Compra c : this.getAtracciones())
+			nombresAtracciones += c.getNombre() + ", ";
 		return "|" + getNombre() + "|\nPreferencia: " + this.getTipo() + "\nCosto: " + this.getCosto()
-				+ " monedas de oro\nTiempo: " + this.getTiempo() + " horas\nAtracciones: " + this.getAtracciones();
+				+ " monedas de oro\nTiempo: " + this.getTiempo() + " horas\nAtracciones: " + nombresAtracciones + "\n";
 	}
 }
