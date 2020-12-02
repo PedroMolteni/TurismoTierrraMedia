@@ -8,8 +8,8 @@ public abstract class Compra implements Comparable<Compra> {
 
 	public static void vender(Usuario usuario, ArrayList<Compra> listaAOfrecer) {
 		Compra.ofrecerOpciones(listaAOfrecer, usuario);
-		System.out.println(usuario.imprimirCompras());
-		System.out.println(usuario.imprimirEstado());
+		System.out.println(usuario.devolverCompras());
+		System.out.println(usuario.devolverEstado());
 		LeerUsuario.grabarItinerario(usuario);
 	}
 
@@ -37,6 +37,33 @@ public abstract class Compra implements Comparable<Compra> {
 	public static void imprimirOpciones(ArrayList<Compra> listaAOfrecerOrdenada, Usuario usuario) {
 		@SuppressWarnings("resource")
 		Scanner sc = new Scanner(System.in);
+		System.out.println();
+		for (Compra c : listaAOfrecerOrdenada) {
+			if (usuario.puedeSeguirComprando(c.getCosto(), c.getTiempo()) && !usuario.yaCompro(c) && c.getCupo() > 0) {
+				System.out.println(usuario.devolverEstado());
+				System.out.println("Le podemos ofrecer " + c + "\nDesea comprar esta oferta? (Y/N)");
+				String respuesta = sc.nextLine();
+				
+				while(!(respuesta.equals("Y") || respuesta.equals("y") || respuesta.equals("N")
+							|| respuesta.equals("n"))) {
+					System.err.println("Ingreso incorrecto, pruebe nuevamente.");
+					usuario.devolverEstado();
+					System.out.println("Le podemos ofrecer " + c + "\nDesea comprar esta oferta? (Y/N)");
+					respuesta = sc.nextLine();
+				}
+				if (respuesta.equals("Y") || respuesta.equals("y")) {
+					usuario.comprar(c);
+					c.restarCupo();
+				}
+			}
+		}
+		// sc.close(); si lo cerramos aca se rompe todo!
+	}
+/* CAMBIAR
+ * 	public static void imprimirOpciones(ArrayList<Compra> listaAOfrecerOrdenada, Usuario usuario) {
+		@SuppressWarnings("resource")
+		Scanner sc = new Scanner(System.in);
+		System.out.println();
 		for (Compra c : listaAOfrecerOrdenada) {
 			if (usuario.puedeSeguirComprando(c.getCosto(), c.getTiempo()) && !usuario.yaCompro(c) && c.getCupo() > 0) {
 				usuario.imprimirEstado();
@@ -53,11 +80,13 @@ public abstract class Compra implements Comparable<Compra> {
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
 					Compra.imprimirOpciones(listaAOfrecerOrdenada, usuario);
+					break;
 				}
 			}
 		}
 		// sc.close(); si lo cerramos aca se rompe todo!
 	}
+ */
 
 	public static boolean pertenceA(ArrayList<Compra> compra, Compra atraccion) {
 		for (Compra comprable : compra) {

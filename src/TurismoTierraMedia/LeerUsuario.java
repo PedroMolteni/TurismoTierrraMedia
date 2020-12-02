@@ -45,7 +45,7 @@ public class LeerUsuario {
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30);
 			PreparedStatement psInsertar = null;
-			if (!usuario.getCompras().isEmpty()) {
+			if (!usuario.getComprasNuevas().isEmpty()) {
 				ResultSet rs = statement.executeQuery(
 						"SELECT usuario.id FROM usuario WHERE usuario.nombre_usuario = '" + usuario.getNombre() + "'");
 				rs.next();
@@ -54,15 +54,15 @@ public class LeerUsuario {
 						"INSERT INTO itinerario(id_usuario, costo, tiempo) VALUES(?,?,?)",
 						PreparedStatement.RETURN_GENERATED_KEYS);
 				psInsertar.setInt(1, idUsuario);
-				psInsertar.setInt(2, Compra.costoTotal(usuario.getCompras()));
-				psInsertar.setDouble(3, Compra.tiempoTotal(usuario.getCompras()));
+				psInsertar.setInt(2, Compra.costoTotal(usuario.getComprasNuevas()));
+				psInsertar.setDouble(3, Compra.tiempoTotal(usuario.getComprasNuevas()));
 				psInsertar.executeUpdate();
 				psInsertar = connection.prepareStatement(
 						"INSERT INTO itinerario_atracciones(id_itinerario, id_atraccion) VALUES(?,?)");
 				rs = psInsertar.getGeneratedKeys();
 				rs.next();
 				int idItinerario = rs.getInt(1);
-				for (Compra c : usuario.getCompras()) {
+				for (Compra c : usuario.getComprasNuevas()) {
 					if (c.esUnaPromo()) {
 						Promocion p = (Promocion) c;
 						for (Atraccion a : p.getAtracciones()) {

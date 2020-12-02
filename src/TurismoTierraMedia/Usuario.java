@@ -8,6 +8,7 @@ public class Usuario {
 	private int presupuesto;
 	private double tiempoDisponible;
 	private ArrayList<Compra> compras;
+	private ArrayList<Compra> comprasNuevas;
 
 	public Usuario(String nombre, String preferencia, int presupuesto, double tiempoDisponible,
 			ArrayList<Compra> compras) {
@@ -16,6 +17,7 @@ public class Usuario {
 		this.presupuesto = presupuesto;
 		this.tiempoDisponible = tiempoDisponible;
 		this.compras = compras;
+		this.comprasNuevas = new ArrayList<Compra>();
 	}
 
 	public String getNombre() {
@@ -48,6 +50,7 @@ public class Usuario {
 
 	public void comprar(Compra compra) {
 		this.getCompras().add(compra);
+		this.getComprasNuevas().add(compra);
 		this.setPresupuesto(this.getPresupuesto() - compra.getCosto());
 		this.setTiempoDisponible(this.getTiempoDisponible() - compra.getTiempo());
 	}
@@ -68,20 +71,45 @@ public class Usuario {
 		return this.getTiempoDisponible() >= tiempo;
 	}
 
-	public String imprimirEstado() {
+	public String devolverEstado() {
 		return "|" + this.getNombre() + "| Le quedan " + this.getPresupuesto() + " monedas y "
 				+ this.getTiempoDisponible() + " horas disponibles";
 	}
-
-	public String imprimirCompras() {
+	
+	/*public String devolverCompras() { CAMBIAR
 		String nombresCompras = "";
-		for (Compra c : this.getCompras())
-			nombresCompras += c.getNombre() + ", ";
-		return "\nCompró: " + nombresCompras;
+		if(!this.getComprasNuevas().isEmpty()) {
+			for (Compra c : this.getComprasNuevas())
+				nombresCompras += c.getNombre() + ", ";
+			nombresCompras = "\nHa comprado: " + nombresCompras;
+			nombresCompras = nombresCompras.substring(0, nombresCompras.length()-2)+".";
+		}
+		if(!this.getCompras().isEmpty()) {
+			for (Compra c : this.getCompras())
+				nombresCompras += c.getNombreAtraccion() + ", ";
+			nombresCompras = "\nSu itinerario incluye: " + nombresCompras;
+			nombresCompras = nombresCompras.substring(0, nombresCompras.length()-2)+".";
+		}
+		return nombresCompras;
+	}*/
+
+	public String devolverCompras() {
+		String nombresCompras = "";
+		if(!this.getCompras().isEmpty()) {
+			for (Compra c : this.getCompras())
+				nombresCompras += c.getNombre() + ", ";
+			nombresCompras = "\nHa comprado: " + nombresCompras;//Su itinerario incluye:
+			nombresCompras = nombresCompras.substring(0, nombresCompras.length()-2)+".";
+		}
+		return nombresCompras;
 	}
 
 	@Override
 	public String toString() {
-		return "|" + this.getNombre() + "|" + ", Preferencia: " + this.imprimirEstado() + this.imprimirCompras();
+		return "|" + this.getNombre() + "|" + ", Preferencia: " + this.devolverEstado() + this.devolverCompras();
+	}
+
+	public ArrayList<Compra> getComprasNuevas() {
+		return comprasNuevas;
 	}
 }
